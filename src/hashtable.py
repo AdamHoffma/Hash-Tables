@@ -23,6 +23,7 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
+        
         return hash(key)
 
 
@@ -51,7 +52,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        node = self.storage[0]
+        if self.storage[0] is None:
+            self.storage[0] = LinkedPair(key, value)
+            return
+        prev = node 
+        while node is not None:
+            prev = node 
+            node = node.next
+        prev.next = LinkedPair(key, value)
 
 
 
@@ -74,7 +83,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = hash(key)
+        node = self.storage[index]
+        while node is not None and node.key != key:
+            node = node.next
+        if node is None:
+            return None
+        else:
+            return node.value
 
 
     def resize(self):
