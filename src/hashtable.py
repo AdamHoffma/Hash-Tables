@@ -52,15 +52,10 @@ class HashTable:
 
         Fill this in.
         '''
-        node = self.storage[0]
-        if self.storage[0] is None:
-            self.storage[0] = LinkedPair(key, value)
-            return
-        prev = node 
-        while node is not None:
-            prev = node 
-            node = node.next
-        prev.next = LinkedPair(key, value)
+        index = self._hash_mod(key)
+        node = LinkedPair(key, value)
+        node.next = self.storage[index]
+        self.storage[index] = node
 
 
 
@@ -72,7 +67,24 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if self.storage[index] is None:
+            return
+        head = self.storage[index]
+        if head.key == key:
+            self.storage[index] = head.next
+            return
+
+        current = self.storage[index]
+        previous = head
+        while current:
+            if current.key == key:
+                previous.next = current.next
+                return
+
+            else:
+                previous = current
+                current = current.next
 
 
     def retrieve(self, key):
@@ -83,24 +95,33 @@ class HashTable:
 
         Fill this in.
         '''
-        index = hash(key)
-        node = self.storage[index]
-        while node is not None and node.key != key:
-            node = node.next
-        if node is None:
-            return None
-        else:
-            return node.value
+        index = self._hash_mod(key)
+        head = self.storage[index]
+
+        while head:
+            if head.key == key:
+                return head.value
+            head = head.next
+
+        return None
 
 
-    def resize(self):
+    def resize(self, factor=2):
         '''
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
 
         Fill this in.
         '''
-        pass
+        self.capacity = int(self.capacity * factor)
+        temp_hashtable = HashTable(self.capacity)
+
+        for node in self.storage:
+            while node:
+                temp_hashtable.insert(node.key, node.value)
+                node = node.next
+
+        self.storage = temp_hashtable.storage
 
 
 
